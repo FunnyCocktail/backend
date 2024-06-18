@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  psql:
+    env_file:
+      - .environments/psql.dev.env
+    volumes:
+      - ../data/psql:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  funnycocktail-api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    build: 
+      context: .
+      dockerfile: ./WebApi/Dockerfile
+    env_file:
+      - .environments/funnycocktail-api.env
+    ports:
+      - 80:8080
+      - 443:443
+    depends_on:
+      - psql
+  nginx:
+    container_name: nginx
+    image: nginx
+    volumes:
+      - ../nginx/conf.dev.d/:/etc/nginx/conf.d/
+    ports:
+      - 8080:8080
+    depends_on:
+      - funnycocktail-api
+    links:
+      - funnycocktail-api
+volumes:
+  database:
