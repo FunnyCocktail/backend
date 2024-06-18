@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  psql:
+    image: postgres:13.3
+    container_name: psql
+    hostname: psql
+    restart: always
+  funnycocktail-api:
+    image: funnycocktail-api:1.0.0
+    container_name: funnycocktail-api
+    depends_on:
+      - psql
